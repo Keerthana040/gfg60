@@ -1,0 +1,5 @@
+import numpy as np
+
+def max_element(arr):
+    # Use NumPy's built-in function to find the maximum element
+    return np.max(arr)
