@@ -1,0 +1,27 @@
+from collections import defaultdict
+import bisect
+
+class Solution:
+    def freqInRange(self, arr, queries):
+        # Preprocessing: map each element to the sorted list of its indices in arr
+        pos_map = defaultdict(list)
+        for idx, val in enumerate(arr):
+            pos_map[val].append(idx)
+        
+        result = []
+        for l, r, x in queries:
+            # If x not in arr at all
+            if x not in pos_map:
+                result.append(0)
+                continue
+            
+            indices = pos_map[x]
+            # Find left bound (first occurrence >= l)
+            left_idx = bisect.bisect_left(indices, l)
+            # Find right bound (last occurrence <= r) via bisect_right
+            right_idx = bisect.bisect_right(indices, r)
+            # Count is the number of indices in [l, r]
+            count = right_idx - left_idx
+            result.append(count)
+        
+        return result
