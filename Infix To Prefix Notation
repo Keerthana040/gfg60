@@ -1,0 +1,46 @@
+class Solution:
+    def infixToPrefix(self, s):
+        def precedence(op):
+            if op in ['+', '-']:
+                return 1
+            elif op in ['*', '/']:
+                return 2
+            elif op == '^':
+                return 3
+            return 0
+        
+        def is_right_associative(op):
+            return op == '^'
+        
+        # Step 1: Reverse the string
+        s = s[::-1]
+        
+        # Step 2: Swap parentheses
+        s = s.replace('(', 'temp').replace(')', '(').replace('temp', ')')
+        
+        # Step 3: Convert to postfix using standard algorithm
+        stack = []
+        result = []
+        
+        for char in s:
+            if char.isalpha():  # Operand
+                result.append(char)
+            elif char == '(':
+                stack.append(char)
+            elif char == ')':
+                while stack and stack[-1] != '(':
+                    result.append(stack.pop())
+                stack.pop()  # Remove '('
+            else:  # Operator
+                while (stack and stack[-1] != '(' and
+                       (precedence(stack[-1]) > precedence(char) or
+                        (precedence(stack[-1]) == precedence(char) and not is_right_associative(char)))):
+                    result.append(stack.pop())
+                stack.append(char)
+        
+        # Pop remaining operators
+        while stack:
+            result.append(stack.pop())
+        
+        # Step 4: Reverse the result to get prefix
+        return ''.join(result[::-1])
