@@ -1,0 +1,11 @@
+def find_salesperson_without_blue_orders(df_salesperson, df_orders, df_company):
+    # Step 1: Get com_id(s) for company named "BLUE"
+    blue_company_ids = df_company[df_company['name'] == 'BLUE']['com_id']
+    
+    # Step 2: Get sales_id(s) who made orders to "BLUE"
+    blue_sales_ids = df_orders[df_orders['com_id'].isin(blue_company_ids)]['sales_id'].unique()
+    
+    # Step 3: Exclude those sales_id from the SalesPerson table
+    result = df_salesperson[~df_salesperson['sales_id'].isin(blue_sales_ids)][['name']]
+    
+    return result
