@@ -1,0 +1,5 @@
+import numpy as np
+
+def flatten_array(arr):
+    # Flatten the 3D array into a 1D array
+    return arr.flatten()
