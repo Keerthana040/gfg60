@@ -1,0 +1,12 @@
+class Solution:
+    def missingRange(self, arr, low, high):
+        # Convert array to set for O(1) lookup
+        arr_set = set(arr)
+        
+        # Find missing numbers in the range [low, high]
+        missing = []
+        for num in range(low, high + 1):
+            if num not in arr_set:
+                missing.append(num)
+        
+        return missing
