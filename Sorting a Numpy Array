@@ -1,0 +1,58 @@
+import numpy as np
+
+def sort_array(arr):
+    # Code here
+    def _mergeSort(nums, l, r):
+        if l >= r:
+            return
+        
+        def merge(nums, l, m, r):
+            # Create temporary arrays for left and right subarrays
+            left_size = m - l + 1
+            right_size = r - m
+            
+            left = np.zeros(left_size, dtype=nums.dtype)
+            right = np.zeros(right_size, dtype=nums.dtype)
+            
+            # Copy data to temporary arrays
+            left[:] = nums[l:m+1]
+            right[:] = nums[m+1:r+1]
+            
+            # Merge the temporary arrays back into nums[l:r+1]
+            i = j = 0  # Initial indexes for left and right subarrays
+            k = l      # Initial index for merged subarray
+            
+            # Merge while both arrays have elements
+            while i < left_size and j < right_size:
+                if left[i] <= right[j]:
+                    nums[k] = left[i]
+                    i += 1
+                else:
+                    nums[k] = right[j]
+                    j += 1
+                k += 1
+            
+            # Copy remaining elements of left[], if any
+            while i < left_size:
+                nums[k] = left[i]
+                i += 1
+                k += 1
+            
+            # Copy remaining elements of right[], if any
+            while j < right_size:
+                nums[k] = right[j]
+                j += 1
+                k += 1
+        
+        # Divide
+        m = (l + r) // 2
+        _mergeSort(nums, l, m)
+        _mergeSort(nums, m + 1, r)
+        
+        # Conquer
+        merge(nums, l, m, r)
+    
+    # Make a copy to avoid modifying the original array
+    result = arr.copy()
+    _mergeSort(result, 0, len(result) - 1)
+    return result
