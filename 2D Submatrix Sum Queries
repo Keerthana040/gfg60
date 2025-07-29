@@ -1,0 +1,35 @@
+class Solution:
+    def prefixSum2D(self, mat, queries):
+        # code here
+        if not mat or not mat[0]:
+            return []
+        
+        n = len(mat)
+        m = len(mat[0])
+        
+        # Create prefix sum array with extra padding for easier boundary handling
+        prefix = [[0] * (m + 1) for _ in range(n + 1)]
+        
+        # Build the 2D prefix sum array
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                prefix[i][j] = (mat[i-1][j-1] + 
+                               prefix[i-1][j] + 
+                               prefix[i][j-1] - 
+                               prefix[i-1][j-1])
+        
+        # Process each query
+        result = []
+        for query in queries:
+            r1, c1, r2, c2 = query
+            
+            # Convert to 1-indexed for prefix array
+            # Calculate submatrix sum using inclusion-exclusion principle
+            submatrix_sum = (prefix[r2+1][c2+1] - 
+                           prefix[r1][c2+1] - 
+                           prefix[r2+1][c1] + 
+                           prefix[r1][c1])
+            
+            result.append(submatrix_sum)
+        
+        return result
