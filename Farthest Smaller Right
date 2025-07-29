@@ -1,0 +1,10 @@
+class Solution:
+    def farMin(self, arr):
+        n = len(arr)
+        res = [-1] * n
+        for i in range(n):
+            for j in range(n - 1, i, -1):  # start from farthest right
+                if arr[j] < arr[i]:
+                    res[i] = j
+                    break
+        return res
