@@ -1,0 +1,97 @@
+import sys
+sys.setrecursionlimit(10**7)
+from collections import deque, defaultdict
+
+class Solution:
+    def solve(self, n, k, query, edges):
+        # Build adjacency list
+        adj = [[] for _ in range(n + 1)]
+        for u, v in edges:
+            adj[u].append(v)
+            adj[v].append(u)
+
+        # Preprocessing for LCA and distance queries using Binary Lifting
+        LOG = 17  # ~ 2^17=131072 > 10^5 max nodes
+        parent = [[-1] * (n + 1) for _ in range(LOG)]
+        depth = [-1] * (n + 1)
+
+        def dfs(u, p, d):
+            parent[0][u] = p
+            depth[u] = d
+            for w in adj[u]:
+                if w != p:
+                    dfs(w, u, d + 1)
+
+        # Run DFS from node 1 (assuming connected tree)
+        dfs(1, -1, 0)
+
+        # Build parent table for Binary Lifting
+        for i in range(1, LOG):
+            for v in range(1, n + 1):
+                if parent[i - 1][v] != -1:
+                    parent[i][v] = parent[i - 1][parent[i - 1][v]]
+
+        def lca(u, v):
+            if depth[u] < depth[v]:
+                u, v = v, u
+            # Bring u and v to the same depth
+            diff = depth[u] - depth[v]
+            for i in range(LOG):
+                if diff & (1 << i):
+                    u = parent[i][u]
+            if u == v:
+                return u
+            # Binary lift both nodes
+            for i in reversed(range(LOG)):
+                if parent[i][u] != parent[i][v]:
+                    u = parent[i][u]
+                    v = parent[i][v]
+            return parent[0][u]
+
+        def dist(u, v):
+            return depth[u] + depth[v] - 2 * depth[lca(u, v)]
+
+        # Keep track of red nodes and minimum distance (darkness)
+        red_nodes = []
+        min_darkness = -1
+
+        # To efficiently find minimum distance between red nodes,
+        # Keep track of newly added node against previous red nodes
+        # and update the minimum darkness.
+        # Because k < n and k operations, max k ~10^5, O(k^2) worst is too big.
+        # Optimize using batch or smart data structures.
+
+        # Since k < n, and k can be up to 10^5, O(k^2) might be too slow.
+        # Use the classic "maintain all red nodes so far, and track minimum distance"
+        # by checking distance from newly added node to all previous red nodes.
+
+        # We can optimize by maintaining the already found minimum darkness,
+        # and checking distance only from newly added node to all previous red.
+
+        result = []
+
+        if k == 0:
+            # No operations, no darkness
+            return [-1]*k
+
+        for i in range(k):
+            cur = query[i]
+            if not red_nodes:
+                # First red node, darkness undefined
+                red_nodes.append(cur)
+                result.append(-1)
+            else:
+                # Compute distance from cur to all existing red nodes
+                local_min = sys.maxsize
+                for rn in red_nodes:
+                    local_min = min(local_min, dist(cur, rn))
+                red_nodes.append(cur)
+                # Update global min_darkness
+                if min_darkness == -1:
+                    min_darkness = local_min
+                else:
+                    if local_min < min_darkness:
+                        min_darkness = local_min
+                result.append(min_darkness if len(red_nodes) > 1 else -1)
+
+        return result
