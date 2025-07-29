@@ -1,0 +1,15 @@
+from collections import defaultdict
+
+class Solution:
+    def countPairs(self, arr):
+        mask_count = defaultdict(int)
+        total_pairs = 0
+        
+        for word in arr:
+            for i in range(len(word)):
+                # Replace character at index i with '*'
+                masked = word[:i] + '*' + word[i+1:]
+                total_pairs += mask_count[masked]
+                mask_count[masked] += 1
+                
+        return total_pairs
