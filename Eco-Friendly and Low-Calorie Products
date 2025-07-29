@@ -1,0 +1,6 @@
+def find_eco_low_calorie_products(df):
+    # Filter products where eco_friendly is 'Y' and calories <= 200
+    filtered_df = df[(df['eco_friendly'] == 'Y') & (df['calories'] <= 200)]
+    
+    # Return only the required columns
+    return filtered_df[['product_id', 'product_name', 'calories']]
