@@ -1,0 +1,8 @@
+import pandas as pd
+
+def find_department_id(df_employees, df_employee_dept):
+    # Merge employee with their department info using a LEFT JOIN on employee id
+    result = pd.merge(df_employees, df_employee_dept, how='left', left_on='id', right_on='id')
+    
+    # Return only employee name and department_id
+    return result[['name', 'department_id']]
