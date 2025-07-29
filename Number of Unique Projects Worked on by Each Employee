@@ -1,0 +1,8 @@
+def count_unique_projects(df):
+    # Group by employee_id and count unique project_id values
+    result = df.groupby('employee_id')['project_id'].nunique().reset_index()
+
+    # Rename the column to 'cnt' as expected by your output
+    result.rename(columns={'project_id': 'cnt'}, inplace=True)
+
+    return result
