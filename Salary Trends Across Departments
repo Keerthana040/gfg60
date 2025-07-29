@@ -1,0 +1,13 @@
+import pandas as pd
+
+def average_salary_by_department(df):
+    # Group by department and calculate average (mean) salary
+    result = df.groupby('department', as_index=False)['salary'].mean()
+
+    # Rename the column to 'average_salary' to avoid KeyError in print
+    result.rename(columns={'salary': 'average_salary'}, inplace=True)
+
+    # Sort by department alphabetically
+    result = result.sort_values(by='department').reset_index(drop=True)
+
+    return result
