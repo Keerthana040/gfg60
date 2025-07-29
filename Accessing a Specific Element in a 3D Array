@@ -1,0 +1,6 @@
+import numpy as np
+
+def access_element(arr, index):
+    # Unpack the index tuple and access the element directly
+    x, y, z = index
+    return arr[x, y, z]
