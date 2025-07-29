@@ -1,0 +1,29 @@
+class Solution:
+    def findKthSmall(self, arr, k):
+        #code here
+        # Convert array to set for O(1) lookup
+        arr_set = set(arr)
+        
+        # Binary search approach
+        left, right = 1, len(arr) + k
+        
+        while left < right:
+            mid = (left + right) // 2
+            
+            # Count how many numbers from arr are <= mid
+            count_present = sum(1 for num in arr if num <= mid)
+            
+            # Number of missing numbers up to mid
+            missing_count = mid - count_present
+            
+            if missing_count < k:
+                left = mid + 1
+            else:
+                right = mid
+        
+        # At this point, left is the smallest number where 
+        # missing_count >= k, but we need to ensure it's actually missing
+        while left in arr_set:
+            left += 1
+            
+        return left
