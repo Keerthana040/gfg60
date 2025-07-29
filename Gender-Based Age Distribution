@@ -1,0 +1,13 @@
+import pandas as pd
+
+def median_age_by_gender(df):
+    # Group by gender and calculate median age
+    result = df.groupby('gender', as_index=False)['age'].median()
+
+    # Rename the column to 'median_age' for clarity
+    result.rename(columns={'age': 'median_age'}, inplace=True)
+
+    # Sort the result by gender alphabetically
+    result = result.sort_values(by='gender').reset_index(drop=True)
+
+    return result
