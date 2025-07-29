@@ -1,0 +1,12 @@
+class Solution:
+    def getLongestPrefix(self, s):
+        n = len(s)
+        
+        for i in range(n - 1, 0, -1):
+            prefix = s[:i]
+            times = (n + i - 1) // i  # Enough repeats to cover s
+            repeated = prefix * times
+            if repeated.startswith(s):
+                return i
+        
+        return -1
