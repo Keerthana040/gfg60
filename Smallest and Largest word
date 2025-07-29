@@ -1,0 +1,22 @@
+class Solution:
+    def smallerAndLarge(self, s):
+        # Split the string into words by spaces
+        words = s.split()
+        
+        if not words:
+            return ["", ""]  # Handle empty string edge case
+        
+        # Initialize with first word values
+        min_word = words[0]
+        max_word = words[0]
+        
+        for word in words:
+            # For minimum length word: select first occurring, so only update if strictly smaller
+            if len(word) < len(min_word):
+                min_word = word
+            
+            # For maximum length word: select last occurring, so update if length >= current max length
+            if len(word) >= len(max_word):
+                max_word = word
+        
+        return [min_word, max_word]
