@@ -1,0 +1,108 @@
+class Solution:
+    def maximizeMedian(self, arr, k):
+        n = len(arr)
+        arr.sort()
+        
+        # For odd length, median is arr[n//2]
+        # For even length, median is floor of average of arr[(n-1)//2] and arr[n//2]
+        # The problem states: For even length, median = floor((middle1 + middle2)/2)
+        # However, the operations only increasing elements by 1, so max median should be 
+        # controlled by these two middle elements.
+        # But the example shows the median after operations as the floor of average of two middle elements.
+        # To maximize median, since the median is average of two middle elements, maximizing smallest middle element 
+        # and the largest middle element both matters.
+        #
+        # A common approach: binary search over answer (median candidate), check feasibility.
+        #
+        # The median or averaged median can be fractional, but since median is floor of average, 
+        # we can binary search integer median candidate.
+
+        # Define target median check for odd or even length.
+        # We will do binary search on possible median values.
+
+        # Left bound for binary search is the current median or floor of average for even case
+        # Right bound can be up to max(arr) + k (all increments added to the median section)
+        
+        # Calculate current median or floor average median:
+
+        if n % 2 == 1:
+            median_index = n // 2
+            left = arr[median_index]
+        else:
+            # Median = floor((arr[mid1] + arr[mid2])/2)
+            mid1, mid2 = n//2 - 1, n//2
+            left = (arr[mid1] + arr[mid2]) // 2
+        
+        right = arr[-1] + k + 1  # a high limit for binary search
+
+        def can_reach(target):
+            # Check if we can achieve median >= target using at most k increments
+            # For odd length: median is element at n//2
+            # For even length: median = floor of average of arr[mid1], arr[mid2]
+            #
+            # For odd length: increment elements from median_index to end up to at least target
+            # For even length, we try to raise the two middle elements so that floor((mid1 + mid2)/2) >= target
+            # Since floor((x+y)/2) >= target => x + y >= 2*target
+            
+            if n % 2 == 1:
+                median_idx = n // 2
+                # sum increments needed to raise all elements from median_idx onwards to at least target
+                increments = 0
+                for i in range(median_idx, n):
+                    if arr[i] < target:
+                        increments += target - arr[i]
+                        if increments > k:
+                            return False
+                return increments <= k
+            else:
+                mid1, mid2 = n//2 - 1, n//2
+
+                # We want floor((arr[mid1] + arr[mid2]) / 2) >= target
+                # That means arr[mid1] + arr[mid2] >= 2 * target
+
+                # We can increment arr[mid1] and arr[mid2], as well as elements to the right if needed,
+                # but to minimize increments, only raise arr[mid1] and arr[mid2] to reach sum >= 2*target
+
+                # Since array sorted, raising arr[mid1] and arr[mid2] to sum of 2*target is minimum increments needed
+
+                sum_mid = arr[mid1] + arr[mid2]
+                needed = max(0, 2*target - sum_mid)
+
+                # We can distribute increments between arr[mid1] and arr[mid2] (and possibly elements > mid2)
+                # But since the median depends only on mid1 and mid2, we only consider raising these directly.
+
+                # However, raising both elements individually may be better:
+                # Let's simulate best distribution:
+
+                # Raise smaller of the two first (greedy)
+                inc_needed = 0
+                a1, a2 = arr[mid1], arr[mid2]
+                # We'll try to raise both to at least target (since avg is floor((a1+a2)/2))
+                # If both at least target, then sum >= 2*target.
+
+                # Calculate increments required to bring both at least target
+                inc1 = max(0, target - a1)
+                inc2 = max(0, target - a2)
+
+                inc_needed = inc1 + inc2
+
+                # If inc_needed >= needed (some cases when sum already close but one very large element), inc_needed is enough.
+
+                # Now we also can increase elements after mid2 (arr[mid2+1] to arr[-1]) if needed,
+                # But that will not help increase median directly for even case as median depends on mid1 and mid2 only.
+
+                # So just check if increments required to raise both mid1 and mid2 to target is <= k
+                # If not, try to increase more elements to support median? No, median depends only on mid1 and mid2.
+
+                return inc_needed <= k
+
+        ans = left
+        while left <= right:
+            mid = (left + right) // 2
+            if can_reach(mid):
+                ans = mid
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return ans
