@@ -1,0 +1,13 @@
+class Solution:
+    def isDivBy7(self, n):
+        n = abs(n)  # optional: handle negative numbers
+        if n == 0 or n == 7:
+            return True
+        
+        while n > 9:
+            last_digit = n % 10
+            n = n // 10
+            n = abs(n - 2 * last_digit)
+        
+        # Check for divisibility when reduced to a single digit (or small number)
+        return n == 0 or n == 7 or n == 14  # 14 included for cases if negative was handled
