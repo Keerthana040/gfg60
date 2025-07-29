@@ -1,0 +1,5 @@
+class Solution:
+    def sortByLength(self, input_string): # <--- It expects a string here
+        # Split the input string into a list of words
+        arr = input_string.split() # <--- It tries to call .split() on input_string
+        return sorted(arr, key=len)
