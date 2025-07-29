@@ -1,0 +1,40 @@
+class Solution:
+    def applyDiff2D(self, mat, opr):
+        n = len(mat)
+        m = len(mat[0])
+        
+        # Create a difference array with extra padding
+        diff = [[0] * (m + 1) for _ in range(n + 1)]
+        
+        # Apply each operation to the difference array
+        for operation in opr:
+            v, r1, c1, r2, c2 = operation
+            
+            # Add v at top-left corner
+            diff[r1][c1] += v
+            
+            # Subtract v at positions to cancel out unwanted additions
+            diff[r1][c2 + 1] -= v
+            diff[r2 + 1][c1] -= v
+            
+            # Add v back at bottom-right corner to correct over-subtraction
+            diff[r2 + 1][c2 + 1] += v
+        
+        # First compute the 2D prefix sum of the difference array
+        for i in range(n + 1):
+            for j in range(m + 1):
+                if i > 0:
+                    diff[i][j] += diff[i-1][j]
+                if j > 0:
+                    diff[i][j] += diff[i][j-1]
+                if i > 0 and j > 0:
+                    diff[i][j] -= diff[i-1][j-1]
+        
+        # Create result matrix by adding the computed differences to original matrix
+        result = [[0] * m for _ in range(n)]
+        
+        for i in range(n):
+            for j in range(m):
+                result[i][j] = mat[i][j] + diff[i][j]
+        
+        return result
