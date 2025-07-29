@@ -1,0 +1,17 @@
+import pandas as pd
+
+def find_rank_scores(df):
+    # Code here
+    # Sort by score in descending order
+    df_sorted = df.sort_values('score', ascending=False)
+    
+    # Use min ranking - ties get same rank, but next rank skips numbers
+    df_sorted['rank'] = df_sorted['score'].rank(method='min', ascending=False)
+    
+    # Convert rank to integer for cleaner output
+    df_sorted['rank'] = df_sorted['rank'].astype(int)
+    
+    # Select only score and rank columns and reset index for consecutive numbering
+    result = df_sorted[['score', 'rank']].reset_index(drop=True)
+    
+    return result
