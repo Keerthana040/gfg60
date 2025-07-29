@@ -1,0 +1,5 @@
+import numpy as np
+
+def transpose_matrix(arr):
+    # Using the transpose() method of the numpy array
+    return arr.transpose()
