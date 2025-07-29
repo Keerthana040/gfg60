@@ -1,0 +1,5 @@
+import numpy as np
+
+def reverse_rows(arr):
+    # Reverse rows by slicing with step -1 along axis 0
+    return arr[::-1, :]
