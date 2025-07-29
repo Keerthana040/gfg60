@@ -1,0 +1,47 @@
+class Solution:
+    def substrWithVowels(self, s1: str, s2: str) -> int:
+        # Convert s1 to a set for O(1) lookup of required vowels
+        required_vowels = set(s1)
+        required_count = len(required_vowels)
+        
+        # If s2 is shorter than s1, it's impossible to contain all vowels
+        if len(s2) < len(s1):
+            return -1
+        
+        # Sliding window variables
+        left = 0
+        min_length = float('inf')
+        vowel_count = {}
+        formed = 0  # Number of unique vowels in current window that meet requirement
+        
+        for right in range(len(s2)):
+            # Add character from the right to the window
+            char = s2[right]
+            
+            # Only process if the character is a required vowel
+            if char in required_vowels:
+                vowel_count[char] = vowel_count.get(char, 0) + 1
+                
+                # If frequency of current vowel added equals 1,
+                # increment the formed count by 1
+                if vowel_count[char] == 1:
+                    formed += 1
+            
+            # Try to contract the window until it ceases to be 'desirable'
+            while left <= right and formed == required_count:
+                # Update minimum length if current window is smaller
+                min_length = min(min_length, right - left + 1)
+                
+                # Remove character from the left of the window
+                left_char = s2[left]
+                
+                if left_char in required_vowels:
+                    vowel_count[left_char] -= 1
+                    if vowel_count[left_char] == 0:
+                        formed -= 1
+                
+                left += 1
+        
+        # Return -1 if no valid substring found, otherwise return minimum length
+        return -1 if min_length == float('inf') else min_length
+        
