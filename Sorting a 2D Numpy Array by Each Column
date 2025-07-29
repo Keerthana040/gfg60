@@ -1,0 +1,5 @@
+import numpy as np
+
+def sort_by_column(arr):
+    # Sort each column independently
+    return np.sort(arr, axis=0)
